@@ -74,6 +74,7 @@ public class AssertTest extends TestCase {
             assertEquals(null, "foo");
             fail();
         } catch (ComparisonFailure e) {
+	    
         }
     }
 
@@ -84,6 +85,26 @@ public class AssertTest extends TestCase {
         } catch (ComparisonFailure e) {
             e.getMessage(); // why no assertion?
         }
+    }
+
+    public void testBadEquals() {
+	class BadEqualsException extends RuntimeException{
+	}
+	class BadEquals {
+	    @ Override
+		public boolean equals(Object oth){
+		throw new BadEqualsException();
+	    }
+	}
+	BadEquals be=new BadEquals();
+	assertEquals(be,be);
+	try {
+	    assertEquals(new BadEquals(),new BadEquals());
+	}catch(BadEqualsException e) {
+	    // this is what we are expecting
+	}catch(Throwable e) {
+	    fail("This should have thrown a BadEqualsException.");
+	}
     }
 
     public void testAssertNullNotEqualsNull() {
